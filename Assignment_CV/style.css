@@ -1,0 +1,135 @@
+body{
+display: flex;
+
+background-color: #2c3e50;
+font-family: Garamond, serif;
+}
+.cont1{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+gap: 10px;
+}
+
+#tr3{
+    display: flex;
+    color: #2c3e50;
+}
+#sp1::before {
+    content: "";
+    animation: animate infinite 2s;
+    
+}
+@keyframes animate {
+
+    0% {
+        content: "S";
+    }
+
+    7% {
+        content: "SH";
+    }
+
+    14% {
+        content: "SHA";
+    }
+    21% {
+        content: "SHAH";
+    }
+    28% {
+        content: "SHAHW";
+    }
+    35% {
+        content: "SHAHWA";
+    }
+    42% {
+        content: "SHAHWAI";
+    }
+    49% {
+        content: "SHAHWAIZ";
+    }
+    56% {
+        content: "SHAHWAIZ H";
+    }
+    63% {
+        content: "SHAHWAIZ HA";
+    }
+    70% {
+        content: "SHAHWAIZ HAS";
+    }
+    77% {
+        content: "SHAHWAIZ HASS";
+    }
+    84% {
+        content: "SHAHWAIZ HASSA";
+    }
+    93% {
+        content: "SHAHWAIZ HASSAN";
+    }
+
+}
+.sec1{
+    height: 100%;
+    width: 30%;
+    color: black;
+    /*  */
+    display: flex;
+    justify-content: start;
+    flex-direction: column;
+    
+    background-image: linear-gradient(to left,#bdc3c7,#2c3e50);
+}
+.Namebar{
+    border: 1px solid red;
+    width: 100%;
+    height: 10%;
+    justify-content: center;
+    
+}
+.bigsec{
+    background-color: white;
+    width: 70%;
+    height: 100%;
+}
+#imagediv{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+#img1{
+    height:100%;
+    width: 100%;
+    flex-shrink: 3;
+    border-radius: 10px;
+}
+#cont{
+    text-align: center;
+}
+#cont h1{
+    color: white;   
+    border-bottom: 2px solid white;   
+}
+#ph{
+    
+    text-align: center;
+    
+}
+#ph1{
+    color: white; 
+text-decoration: underline;  
+}
+.num{
+    margin-top: -10px;
+    color: #000000;
+    font-weight: bolder;
+}
+#educpara{
+    font-weight: bold;
+}
+.shakalaka{
+    text-align: left;
+}
+#sh2{
+    display: flex;
+    justify-content: center;
+}
