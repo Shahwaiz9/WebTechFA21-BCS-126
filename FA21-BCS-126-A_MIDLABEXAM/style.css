@@ -1,0 +1,176 @@
+#navdiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0px 25px 20px -20px rgba(0, 0, 0, 0.45);
+}
+#navimg{
+    display: flex;  
+    justify-content: center;
+    padding: 30px   ;
+}
+#img1{
+    height: 45px;
+}
+#navcontents{
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+    justify-content: center;
+    margin-top: -2px;
+}
+#dv{
+    width: 10em;
+    border-top: 5px solid black;
+}
+#dpimg{
+    margin-top: -10px;
+    padding: 10px;
+    border-radius: 10px;
+    height: 20px;
+    border: 3px solid gray;
+}
+#navbot{
+    display: flex;
+    flex-direction: row;
+}
+#redcont p{
+    color: rgb(180, 0, 0);
+    font-size: 15px;
+    font-weight: 400;
+    margin-left: 100px;
+}
+#search{
+    color: silver;
+}
+#searchicon{
+    margin-left: 10px;
+}
+#bottomright{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    margin-left: 300px; 
+   
+}
+#butt1{
+    background-color:#b80424;
+    margin: 10px;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    justify-content: center;
+    color: white;
+}
+
+#butt2{
+    background-color:white;
+    margin: 10px;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    justify-content: center;
+    color: #b80424;
+    border: 1px solid #b80424;
+}
+#col1{
+    padding-right: 10px;
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    padding-left: 30px;
+    border-right: 1px solid black;
+}
+.str1{
+    border-bottom: 1px solid black;
+}
+.str1 h1{
+    color: #b80424;
+    font-size: 35px;
+}
+
+.str1 h4{
+    font-weight: 100;
+    font-size: 20px;
+}
+.str1 p{
+    font-size: 12px;
+    text-decoration: underline;
+    font-weight: 550;
+}
+
+#Stories{
+    display: flex;
+    flex-direction: row;
+}
+#col2{
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid black;
+    padding: 20px;
+}
+#col2 h1{
+    font-size: 45px;
+    
+    width: 100%;
+}
+#col2 h3{
+    font-size: 20px;
+    font-weight: 300;
+    margin-top: -10px;
+}
+#col2 p{
+    font-size: 12px;
+    text-align: left;
+    text-decoration: underline;
+}
+#pp{
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    width: 100%;
+}
+#pc1{
+    width: 100%;
+}
+#rush{
+    height: 100%;
+    width: 100%;
+}
+#rowhead{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+#rowhead h1{
+    font-size: 22px;
+}
+#hbot{
+    border-bottom: 1px solid black;
+}
+#boathead{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+#boathead img{
+    height: 200px;
+}
+#boathead h1{
+    font-size: 22px;   
+}
+#col3{
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+}
+#col3h1{
+    color: #b80424;
+    font-size: 30px;
+    
+}
