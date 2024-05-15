@@ -1,0 +1,102 @@
+:root{
+    --bs-font-sans-serif:'Rubik',sans-serif;
+}
+
+body{
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
+    
+    background-image: url('/img/bgimgfood.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+#titletext{
+    margin-left: 10px;
+    font-weight: 500;
+    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+}
+#header1{
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;   
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    left: 0;
+    height: 5em;
+    width: 100%;
+    padding-bottom: 20px;
+    background-color: rgba(54, 54, 54, 0.696);
+    position: fixed;
+    top:0;
+    z-index: 10;
+  
+}
+
+
+ #navdiv ul li:last-child {
+    margin-right: 0; 
+}
+
+ #formdiv {
+    display: none; 
+}
+
+@media (max-width: 768px) {
+    #header1 #formdiv {
+        display: block;
+    }
+}
+#ct1{
+    width: 100%;
+    
+    height: 40em;
+}
+#anchorhead{
+    display: flex;
+    flex-direction: row;
+    width: 40%;
+    padding-top: 10px;
+    text-decoration: none;
+    margin-left: 30px;
+}
+#navdiv{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+    padding-top: 25px;
+    float: left;
+  
+}
+#navdiv ul{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 30px;
+    margin-left: 90px;
+}
+#navdiv ul li{
+    list-style: none;
+    
+}
+#navdiv ul li a{
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+}
+#searchbar{
+    margin-top: 20px;
+    width: 13em;
+    margin-left: 20px;
+    margin-right: 40px;
+}
+
+#formdiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
