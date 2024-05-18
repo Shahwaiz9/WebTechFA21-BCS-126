@@ -151,6 +151,10 @@ body{
     color: crimson;
 }
 
+#searchbar::selection{
+    border-color: crimson;
+}
+
 
 
 #formdiv{
@@ -445,27 +449,39 @@ ul{
     opacity: 1;
     right: 10px;
 }
-.carasoulimg{
-    width: 100%;
+
+.carouselimg{
+    height: 20em;
+    width: 80%;
+    margin:100px;
+    border-radius: 20px;
     
-    height: 25em;
-    image-resolution: 1920*1680;
+}
+#flexcont{
+    position: relative;
+}
+.carhead{
+    
+    position: absolute;
+    z-index: 10;
+    top: 15em;
+    color: black;
+    font-size: 28px;
+    font-weight: 900;
+}
+#crimga{
+
+    z-index: 4;
+}
+#crimga img{
+
+    z-index: 4;
 }
 
 .category__link:hover{
     transform: scale(1.1);
 }
-.category__img{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    margin-bottom: 10px;
-    box-shadow: 0px 3px 6px rgba(0,0,0,.16);
-    overflow: hidden;
-    border-radius: 10px;
-    
-}
+
 .category__img img{
     border-radius: 10px;
 }
