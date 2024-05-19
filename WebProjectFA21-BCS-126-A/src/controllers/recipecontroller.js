@@ -11,10 +11,11 @@ exports.homepage=async(req,res)=>{
     try{
         const limitcat=5;
         const categories=await Category.find({}).limit(limitcat);
-
+        const latest=await Recipe.find({}).sort({_id:-1}).limit(limitcat)
+        const food={latest};
 
             
-    res.render('index',{title: 'Cookbook Community',categories});
+    res.render('index',{title: 'Cookbook Community',categories,food});
 
     }catch(error){
         console.log(error)
