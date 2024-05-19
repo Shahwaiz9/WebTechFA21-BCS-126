@@ -48,7 +48,7 @@ body{
     display: flex;
     flex-direction: row;
     left: 0;
-    height: 4em;
+    height: 80px;
     width: 100%;
     padding-bottom: 20px;
     background-color: rgba(10, 6, 11, 0.443);
@@ -459,13 +459,20 @@ ul{
 }
 #flexcont{
     position: relative;
+    
+}
+#h1head1{
+    font-size: 2em;
+    font-weight: 700;
+    color: blueviolet;
 }
 .carhead{
     
     position: absolute;
     z-index: 10;
-    top: 15em;
-    color: black;
+    top: 10px;
+    left: 4empx;
+    color: white;
     font-size: 28px;
     font-weight: 900;
 }
@@ -504,7 +511,27 @@ ul{
   }
   
   #subrecbut:hover {
-    background-color: rgb(18, 194, 194);
+    background-color:aqua;
+    color: black;
+    animation: shake2 0.4s ease-in-out; /* Applying the shake animation on hover */
+  }
+  @keyframes shake2 {
+    0% { transform: rotate(1deg); }
+    25% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+    75% { transform: rotate(-1deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+
+  /* subrec all button */
+  
+  #viewbut {
+    transition: background-color 0.3s ease; /* Adding a transition for background color change */
+  }
+  
+  #viewbut:hover {
+    background-color:crimson;
     color: black;
     animation: shake 0.4s ease-in-out; /* Applying the shake animation on hover */
   }
@@ -514,4 +541,16 @@ ul{
     50% { transform: rotate(1deg); }
     75% { transform: rotate(-1deg); }
     100% { transform: rotate(0deg); }
+  }
+
+  /* Cateforiesall */
+
+  #categoriesall{
+    margin-top: 100px;
+  }
+  #ctallimg{
+    height: 7em;
+  }
+  .breadcrumb li a:hover{
+    color: crimson;
   }

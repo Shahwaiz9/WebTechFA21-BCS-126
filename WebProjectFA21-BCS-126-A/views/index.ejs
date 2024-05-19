@@ -77,9 +77,9 @@ Welcome to our delightful culinary hub, where flavor meets creativity and every 
           <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="3000">
               <div class="d-flex justify-content-center" id="flexcont">
                 <div class="carhead">
-                  <h1><%- category.name %></h1>
+                  <h1 id="h1head1"><%- category.name %> Food Recipes</h1>
                 </div>
-                  <a href="" id="crimga">
+                  <a href="/categories/<%- category.name %>" id="crimga">
                     <img src="/img/<%- category.image %>" class="carouselimg" alt="..." loading="lazy">
                   </a>
               </div>
@@ -88,19 +88,19 @@ Welcome to our delightful culinary hub, where flavor meets creativity and every 
           </div>
       <% }); %>
   <% } %>
-  
-
-
     
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
+    
   </button>
   <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
+   
   </button>
+  <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+    <a href="/categories" id="viewbut" class="btn btn-primary btn-dark btn-lg">View All</a>
+  </div>
 </div>
 </section>
 
