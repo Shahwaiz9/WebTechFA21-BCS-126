@@ -12,8 +12,11 @@ exports.homepage=async(req,res)=>{
         const limitcat=5;
         const categories=await Category.find({}).limit(limitcat);
         const latest=await Recipe.find({}).sort({_id:-1}).limit(limitcat)
-        const food={latest};
-
+       
+        const thai= await Recipe.find({'category': 'Thai'}).limit(limitcat)
+        const american= await Recipe.find({'category': 'American'}).limit(limitcat)
+        const chinese= await Recipe.find({'category': 'Chinese'}).limit(limitcat)
+        const food={latest,thai,american,chinese};
             
     res.render('index',{title: 'Cookbook Community',categories,food});
 
@@ -38,6 +41,20 @@ exports.exploreCategories=async(req,res)=>{
 }
 
 
+//recipe by id shawo
+exports.exploreRecipe=async(req,res)=>{
+
+    try{
+       let recid= req.params.id;
+       const recipe=await Recipe.findById(recid);
+
+        
+    res.render('recipe',{title: 'Cookbook Community',recipe});
+
+    }catch(error){
+        console.log(error)
+    }
+}
 
 
 

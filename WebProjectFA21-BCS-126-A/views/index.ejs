@@ -132,6 +132,101 @@ Welcome to our delightful culinary hub, where flavor meets creativity and every 
 </section>
 
 
+
+<!-- Categories 5 each display -->
+
+
+
+
+<section class="pb-4 pt-4 mt-5 ms-4 me-4 catsec">
+  <div class="d-flex mb-2 align-items-center">
+    <h2>Thai Cuisine</h2>
+    <a href="/categories/Thai" class="ms-auto" id="viewmoretext"> View more</a>
+
+  </div>
+
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    
+    <% if (typeof food.thai !== 'undefined' && food.thai.length!=0) { %>
+      <% food.thai.forEach(function(recipe, index) { %>
+        <a href="/recipe/<%- recipe._id %>" class="col text-center category__link">
+          <div class="category__img category__img--large shadow">
+            <img src="/uploads/<%- recipe.image %>" alt=" ">     
+          </div>
+          <div class="pt-1"><%- recipe.name %></div>
+        </a>
+      <% }); %>
+    <% } %>
+    
+
+  </div>
+
+
+</section>
+<section class="pb-4 pt-4 mt-5 ms-4 me-4">
+  <div class="d-flex mb-2 align-items-center">
+    <h2>American Cuisine</h2>
+    <a href="/categories/American" class="ms-auto" id="viewmoretext"> View more</a>
+
+  </div>
+
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    
+    <% if (typeof food.american !== 'undefined' && food.american.length!=0) { %>
+      <% food.american.forEach(function(recipe, index) { %>
+        <a href="/recipe/<%- recipe._id %>" class="col text-center category__link">
+          <div class="category__img category__img--large shadow">
+            <img src="/uploads/<%- recipe.image %>" alt=" ">     
+          </div>
+          <div class="pt-1"><%- recipe.name %></div>
+        </a>
+      <% }); %>
+    <% } %>
+    
+
+  </div>
+
+
+</section>
+<section class="pb-4 pt-4 mt-5 ms-4 me-4">
+  <div class="d-flex mb-2 align-items-center">
+    <h2>Chinese Cuisine</h2>
+    <a href="/categories/Chinese" class="ms-auto" id="viewmoretext"> View more</a>
+
+  </div>
+
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    
+    <% if (typeof food.chinese !== 'undefined' && food.chinese.length!=0) { %>
+      <% food.chinese.forEach(function(recipe, index) { %>
+        <a href="/recipe/<%- recipe._id %>" class="col text-center category__link">
+          <div class="category__img category__img--large shadow">
+            <img src="/uploads/<%- recipe.image %>" alt=" ">     
+          </div>
+          <div class="pt-1"><%- recipe.name %></div>
+        </a>
+      <% }); %>
+    <% } %>
+    
+
+  </div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- End categories 5 each display -->
 <!-- Submit section -->
 
 <section class="px-4 py-5 my-5 text-center">
