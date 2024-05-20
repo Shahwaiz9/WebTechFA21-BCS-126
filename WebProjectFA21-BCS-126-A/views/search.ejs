@@ -1,0 +1,26 @@
+<section class="pb-4 pt-4 mt-5 ms-4 me-4">
+    <div class="d-flex mb-2 align-items-center">
+      <h2>Latest Recipes</h2>
+      <a href="/explore-latest" class="ms-auto" id="viewmoretext"> View more</a>
+  
+    </div>
+  
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      
+      <% if (typeof recipe !== 'undefined' && recipe.length > 0) { %>
+        <% recipe.forEach(function(rec, index) { %>
+          <a href="/recipe/<%- rec._id %>" class="col text-center category__link">
+            <div class="category__img category__img--large shadow">
+              <img src="/uploads/<%- rec.image %>" alt=" ">     
+            </div>
+            <div class="pt-1"><%- rec.name %></div>
+          </a>
+        <% }); %>
+      <% } %>
+      
+  
+    </div>
+  
+  
+  </section>
+  

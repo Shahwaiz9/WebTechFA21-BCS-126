@@ -1,6 +1,10 @@
 :root{
     --bs-font-sans-serif:'Rubik',sans-serif;
 }
+#subhead1{
+    width: 8em;
+    margin-right: -2em;
+}
 
 body{
     box-sizing: border-box;
@@ -572,19 +576,23 @@ ul{
 }
 #rectitle2{
     font-weight: 700;
-    font-size: 2em;
-    margin-bottom: 30px;
-    border-bottom: 5px solid crimson;
+    font-size: 1.8em;
     height: 1.4em;
-    width: 8em;
+    
+    width: 100%;
 }
+#recd{
+    margin-bottom: 40px;
+    border-bottom: 5px solid crimson;
+}
+
 .bii{
     color: rgb(24, 191, 203);
     font-weight: 600;
     font-size: 30px;
     border: 3px solid crimson;
     border-radius: 20px;
-    width: 5em;
+    width: 7em;
 }
 .bi-tag{
     color: crimson;

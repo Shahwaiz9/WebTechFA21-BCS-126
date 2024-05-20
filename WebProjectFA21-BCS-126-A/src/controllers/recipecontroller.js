@@ -9,7 +9,7 @@ const { title } = require("process");
 exports.homepage=async(req,res)=>{
 
     try{
-        const limitcat=5;
+        const limitcat=6;
         const categories=await Category.find({}).limit(limitcat);
         const latest=await Recipe.find({}).sort({_id:-1}).limit(limitcat)
        
@@ -56,8 +56,30 @@ exports.exploreRecipe=async(req,res)=>{
     }
 }
 
+// categories id get
+exports.exploreCategoriesbyID=async(req,res)=>{
 
+    try{
+        let cid=req.params.id
+        const categbyID=await Recipe.find({'category':cid})
+            
+    res.render('recipecategories',{title: 'Cookbook Community',categbyID,cid});
 
+    }catch(error){
+        console.log(error)
+    }
+}
+
+exports.searchRecipe=async(req,res)=>{
+    try{
+        let searchterm=req.body.searchTerm;
+        let recipe=await Recipe.find({$text:{$search: searchterm,$diacriticSensitive:true}})
+        res.y
+        res.render('search',{title:'Cookbook Community',recipe});
+    }catch(error){
+        console.log(error)
+    }
+}
 
 
 // async function insertDymmyDataCategory(){
