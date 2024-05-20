@@ -1,1 +1,46 @@
-<h1>recipe</h1>
+<section id="recipesec">
+
+<% if(recipe != null ) { %>
+
+    <nav aria-label="breadcrumb" >
+      <ol class="breadcrumb" id="bred">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page" id="rectitle"><%- recipe.name %></li>
+      </ol>
+    </nav>
+  
+  
+    <div class="row">
+  
+      <div class="col-12 col-md-4">
+        <img src="/uploads/<%- recipe.image %>" id="recimg" class="img-fluid " style="top: 20px;" alt="<%- recipe.name %>" loading="lazy">
+      </div>
+  
+      <div class="col-12 col-md-8">
+        <div class="row">
+          <div class="col-12"><h1 id="rectitle2"><%- recipe.name %></h1></div>
+          <div class="col-12 mb-4 bii"><i class="bi bi-tag"></i> <%- recipe.category %></div>
+          <div class="col-12" style="white-space: pre-line;">
+            <h4 id="cookh">Cooking Instructions</h4>
+            <p id="pdec"><%- recipe.description %></p>
+          </div>
+        </div>
+  
+        
+      </div>
+    </div>
+    <div class="" id="ingdiv">
+        <div class="">
+          <h4 id="ingh">Ingredients</h4>
+          <ol class="list-group list-group-flush" id="olid">
+            <% recipe.ingredients.forEach(function(ingredients, index){ %>
+              <li class="olli"><p id="lip"><%= ingredients %></p></li>
+            <% }) %>
+            </ol> 
+        </div>
+      </div>
+  <% } else { %>
+    <p>No item found.</p>
+  <% } %>
+
+</section>
