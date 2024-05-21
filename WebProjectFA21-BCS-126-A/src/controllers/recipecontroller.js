@@ -11,7 +11,7 @@ exports.homepage=async(req,res)=>{
     try{
         const limitcat=6;
         const categories=await Category.find({}).limit(limitcat);
-        const latest=await Recipe.find({}).sort({_id:-1}).limit(limitcat)
+        const latest=await Recipe.find({}).sort({_id:-1}).limit(5)
        
         const thai= await Recipe.find({'category': 'Thai'}).limit(limitcat)
         const american= await Recipe.find({'category': 'American'}).limit(limitcat)
@@ -57,24 +57,49 @@ exports.exploreRecipe=async(req,res)=>{
 }
 
 // categories id get
-exports.exploreCategoriesbyID=async(req,res)=>{
+// exports.exploreCategoriesbyID=async(req,res)=>{
 
-    try{
-        let cid=req.params.id
-        const categbyID=await Recipe.find({'category':cid})
-            
-    res.render('recipecategories',{title: 'Cookbook Community',categbyID,cid});
+//     try{
+//         let cid=req.params.id
+//         let page = parseInt(req.query.page) || 1; // Current page number, default is 1
+//         let limit1 = parseInt(req.query.limit) || 2;
+//         const categbyID=await Recipe.find({'category':cid}).skip((page-1)*limit1).limit(limit1)
+   
+//     res.render('recipecategories',{title: 'Cookbook Community',categbyID,cid});
 
-    }catch(error){
-        console.log(error)
+//     }catch(error){
+//         console.log(error)
+//     }
+// }
+
+exports.exploreCategoriesbyID = async (req, res) => {
+    try {
+        let cid = req.params.id;
+        let page = parseInt(req.query.page) || 1; // Current page number, default is 1
+        let limit = parseInt(req.query.limit) || 2; // Number of recipes per page, default is 2
+
+        let recipes = await Recipe.find({ 'category': cid })
+                                  .skip((page - 1) * limit)
+                                  .limit(limit);
+
+        let totalRecipes = await Recipe.countDocuments({ 'category': cid });
+        let totalPages = Math.ceil(totalRecipes / limit);
+
+        res.render('recipecategories', {
+            title: 'Cookbook Community',categbyID: recipes,cid: cid,currentPage: page,totalPages: totalPages,limit: limit});
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
     }
-}
+};
+
 
 exports.searchRecipe=async(req,res)=>{
     try{
         let searchterm=req.body.searchTerm;
         let recipe=await Recipe.find({$text:{$search: searchterm,$diacriticSensitive:true}})
-        res.y
+      
         res.render('search',{title:'Cookbook Community',recipe});
     }catch(error){
         console.log(error)
