@@ -13,27 +13,57 @@
 </head>
 <body>
         
-        <div id="header1">
-            <a href="/" class="" id="anchorhead">
-                <img src="/img/titleicon.png" width="50" alt="Cookbook Community" id="cookbookimg">
-                <p id="titletext">Cookbook Community</p>
-            </a>
-            <div id="navdiv">
-                <ul>
-                    <li><a href="/" class="">Home</a></li>
-                    <li><a href="/categories" class=" ">Categories</a></li>
-                    <li><a href="/submit"  id="subhead1" class="">Submit Recipe</a></li>
-                    <li><a href="/contact" class="">Contact</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3 text-end" id="formdiv">
-                <form method="POST" action="/search" id="form1">
-                    <input type="search" name="searchTerm" class="form-control" placeholder="Search..."
-                    aria-label="Search" id="searchbar">
-                </form>
-            </div>
-       </div>
-       
+    <div id="header1">
+        <a href="/" class="" id="anchorhead">
+            <img src="/img/titleicon.png" width="50" alt="Cookbook Community" id="cookbookimg">
+            <p id="titletext">Cookbook Community</p>
+        </a>
+        <div id="navdiv">
+            <ul>
+                <li><a href="/" class="">Home</a></li>
+                <li><a href="/categories" class=" ">Categories</a></li>
+                <li><a href="/submit-recipe"  id="subhead1" class="">Submit Recipe</a></li>
+                <li><a href="/contact" class="">Contact</a></li>
+                <li>
+                    <div id="dropbar" class="dropdown">
+                        <div class="bardivs"></div>
+                        <div class="bardivs"></div>
+                        <div class="bardivs"></div>
+                        <div class="dropdown-content">
+                            <% if(logbool==false) {%>
+                            <a href="/log-in" class="loga"><p>Login</p></a>
+                            <a href="/sign-in" class="loga"><p>SignIn</p></a>
+                            <% } else{ %>
+                                <a href="/log-out" class="loga"><p>Logout</p></a>
+                                <% } %>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3 text-end" id="formdiv">
+            <form method="POST" action="/search" id="form1">
+                <input type="search" name="searchTerm" class="form-control" placeholder="Search..." aria-label="Search" id="searchbar">
+            </form>
+        </div>
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+    const dropbar = document.getElementById('dropbar');
+    const dropdownContent = dropbar.querySelector('.dropdown-content');
+
+    dropbar.addEventListener('click', () => {
+        dropdownContent.classList.toggle('show');
+    });
+
+    window.addEventListener('click', (event) => {
+        if (!dropbar.contains(event.target)) {
+            dropdownContent.classList.remove('show');
+        }
+    });
+});
+
+</script>    
        
     
     

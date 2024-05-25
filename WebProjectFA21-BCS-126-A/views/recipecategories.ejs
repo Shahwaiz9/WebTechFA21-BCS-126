@@ -11,15 +11,7 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <style>
-  .pagination .page-item .page-link {
-    background: none;
-    border: none;
-    color: #007bff;
-  }
-  .pagination .page-item.active .page-link {
-    color: #495057;
-    pointer-events: none;
-  }
+  
 </style>
 <section id="categoriesall">
 <h1 class="pb-4">Explore Categories</h1>
@@ -33,7 +25,7 @@
 </ol>
 </nav>
 
-<div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mb-4">
+<div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mb-4" id="reccatdic">
 <% if(typeof categbyID !== 'undefined' && categbyID.length > 0) { %>
   <% categbyID.forEach(function(category, index) { %>
     <a href="/recipe/<%- category._id %>" class="col text-center category__link">

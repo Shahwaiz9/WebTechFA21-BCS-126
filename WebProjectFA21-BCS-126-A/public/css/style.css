@@ -115,6 +115,7 @@ body{
     list-style: none;
     
 }
+
 @media (max-width: 1000px) {
     #searchbar{
         display: none;
@@ -512,7 +513,7 @@ ul{
     color: crimson;
 }
 
-  
+  search
   #subrecbut {
     transition: background-color 0.3s ease; /* Adding a transition for background color change */
   }
@@ -638,3 +639,174 @@ ul{
     position: relative;
     left: 10%;
 }
+#dropbar {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.bardivs {
+    width: 1.3em;
+    border: 2px solid whitesmoke;
+    border-radius: 20px;
+}
+
+#dropbar:hover .bardivs {
+    border: 2px solid rgb(182, 0, 36);
+}
+
+.dropdown-content {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.705);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.564);
+    z-index: 1;
+    margin-top: 30px;
+    top: 20px;
+    transition: opacity 0.3s;
+    border-radius: 20px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+}
+.loga p{
+    
+    font-size: 20px;
+    font-weight: 700;
+   
+}
+
+.show {
+    visibility: visible;
+    opacity: 1;
+}
+.pagination .page-item .page-link {
+    background: none;
+    border: none;
+    color: #007bff;
+  }
+  .pagination .page-item.active .page-link {
+    color: #495057;
+    pointer-events: none;
+  }
+  #reccatdic{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 5em;
+  }
+
+  #subbutf{
+    margin-top: 20px;
+    border: 0px ;
+    height: 3em;
+    background-color: rgb(134, 0, 27);
+  }
+
+.inpbar{
+    
+    background-color: #ffffff00;
+    color: crimson;
+    border-radius: 20px;
+    padding: 10px;
+    border: 3px solid crimson;
+    
+}
+
+.inpbar::selection{
+    border-color: crimson;
+}
+.inpbar::-webkit-file-upload-button{
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    border: 1px solid crimson;
+    color: white;
+    width: 7em;
+    font-size: 20px;
+
+}
+#email{
+    width: 20em;
+    margin-left: 5em;
+}
+#name{
+    width: 20em;
+    margin-left: 1.4em;
+}
+#description{
+    width: 20em;
+    margin-left: 2.7em;
+}
+.ing{
+    width: 20em;
+    margin-left: 2.6em;
+    margin-top: 10px;
+}
+#addIngredientsBtn{
+    color: white;
+    width: 8em;
+    height: 3em;
+    background-color: #24262b;
+}
+#addIngredientsBtn:hover{
+    background-color: rgb(149, 0, 30);
+}
+.ingbut{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.catdivsub{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+#sel{
+    background-color: black;
+    
+    border-radius: 20px;
+}
+#prodimgd{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
+label{
+    font-weight: 700;
+    color: gray;
+}
+#prodl{
+    margin-top: 10px;
+}
+#subbut2{
+    color: white;
+    width: 10em;
+    height: 3em;
+    background-color: #24262b;
+}
+#subbut2:hover{
+    background-color: rgb(149, 0, 30);
+}
+#subd{
+    margin-top: 3em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+

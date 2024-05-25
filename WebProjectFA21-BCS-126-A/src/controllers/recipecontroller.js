@@ -1,11 +1,11 @@
 require('../models/database');
 const Category=require('../models/Category');
 const Recipe=require('../models/Recipe');
-
-
+const User=require('../models/Users')
+const bcrypt = require('bcryptjs');
 
 const { title } = require("process");
-
+let logbool=false;
 exports.homepage=async(req,res)=>{
 
     try{
@@ -18,7 +18,7 @@ exports.homepage=async(req,res)=>{
         const chinese= await Recipe.find({'category': 'Chinese'}).limit(limitcat)
         const food={latest,thai,american,chinese};
             
-    res.render('index',{title: 'Cookbook Community',categories,food});
+    res.render('index',{title: 'Cookbook Community',categories,food,logbool:logbool});
 
     }catch(error){
         console.log(error)
@@ -33,7 +33,7 @@ exports.exploreCategories=async(req,res)=>{
 
 
             
-    res.render('categories',{title: 'Cookbook Community',categories});
+    res.render('categories',{title: 'Cookbook Community',categories,logbool:logbool});
 
     }catch(error){
         console.log(error)
@@ -49,12 +49,20 @@ exports.exploreRecipe=async(req,res)=>{
        const recipe=await Recipe.findById(recid);
 
         
-    res.render('recipe',{title: 'Cookbook Community',recipe});
+    res.render('recipe',{title: 'Cookbook Community',recipe,logbool:logbool});
 
     }catch(error){
         console.log(error)
     }
 }
+
+
+
+
+
+
+
+
 
 // categories id get
 // exports.exploreCategoriesbyID=async(req,res)=>{
@@ -74,7 +82,7 @@ exports.exploreRecipe=async(req,res)=>{
 
 exports.exploreCategoriesbyID = async (req, res) => {
     try {
-        let cid = req.params.id;
+         let cid = req.params.id;
         let page = parseInt(req.query.page) || 1; // Current page number, default is 1
         let limit = parseInt(req.query.limit) || 2; // Number of recipes per page, default is 2
 
@@ -86,7 +94,7 @@ exports.exploreCategoriesbyID = async (req, res) => {
         let totalPages = Math.ceil(totalRecipes / limit);
 
         res.render('recipecategories', {
-            title: 'Cookbook Community',categbyID: recipes,cid: cid,currentPage: page,totalPages: totalPages,limit: limit});
+            title: 'Cookbook Community',categbyID: recipes,cid: cid,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool});
 
     } catch (error) {
         console.log(error);
@@ -99,12 +107,193 @@ exports.searchRecipe=async(req,res)=>{
     try{
         let searchterm=req.body.searchTerm;
         let recipe=await Recipe.find({$text:{$search: searchterm,$diacriticSensitive:true}})
-      
-        res.render('search',{title:'Cookbook Community',recipe});
+        res.render('search',{title:'Cookbook Community',recipe,logbool:logbool});
     }catch(error){
         console.log(error)
     }
 }
+
+
+exports.exploreLatest=async (req,res)=>{
+    try{
+        let page = parseInt(req.query.page) || 1; // Current page number, default is 1
+        let limit = parseInt(req.query.limit) || 3;
+        const latest=await Recipe.find({}).sort({_id:-1}).skip((page - 1) * limit).limit(limit);
+        
+        let totalPages = Math.ceil(10 / limit);
+        res.render("explorelatest",{title:'Cookbook Community',latest,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool})
+    }catch(error){
+        console.log(error)
+    }
+
+}
+exports.exploreRandom=async (req,res)=>{
+    try{
+        let page = parseInt(req.query.page) || 1; // Current page number, default is 1
+        let limit = parseInt(req.query.limit) || 3;
+        let count=await Recipe.find().countDocuments()
+        let random=Math.floor(Math.random() * count);
+        let recipe=await Recipe.find().skip(random).limit(4).exec();
+        const latest=await Recipe.find({}).sort({_id:-1}).skip((page - 1) * limit).limit(limit);
+        
+        let totalPages = Math.ceil(10 / limit);
+
+        res.render("explorerandom",{title:'Cookbook Community',recipe,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool})
+    }catch(error){
+        console.log(error)
+    }
+
+}
+exports.submitrecipe=async (req,res)=>{
+    try{  
+        const infoerrorobj=req.flash('infoErrors')
+        const infosubobj=req.flash('infoSubmit')
+        res.render('submitrec',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool})
+    }catch(error){
+        console.log(error);
+    } 
+}
+exports.submitrecipeOnPost=async (req,res)=>{
+    try{  
+
+
+        let imageUploadFile;
+        let uploadPath;
+        let newImageName;
+
+
+        if(!req.files || Object.keys(req.files).length ===0){
+            console.log('No Files were uploaded')
+        }else{
+            imageUploadFile=req.files.image;
+            newImageName=Date.now() + imageUploadFile.name;
+            uploadPath=require('path').resolve('./') + '/public/uploads/' +newImageName;
+
+            imageUploadFile.mv(uploadPath,function(err){
+                if(err) return res.status(500).send(err);
+            })
+        
+        }
+
+
+
+
+
+
+
+        const recipen=new Recipe({
+            name: req.body.name,
+            description: req.body.description,
+            email: req.body.email ,
+            ingredients:  req.body.ingredients,
+            category: req.body.category,
+            image: newImageName
+        });
+        await recipen.save();
+
+
+        req.flash('infoSubmit','Recipe is added successfully')
+        res.redirect('/submit-recipe')   
+    }catch(error){
+        console.log(error)
+        req.flash('infoErrors', error)
+        res.redirect('/submit-recipe')
+    } 
+}
+
+
+
+
+// login and signin
+
+exports.SigninGet= async (req,res)=>{
+    try {
+        const infoerrorobj=req.flash('infoErrors')
+        const infosubobj=req.flash('infoSubmit')
+        res.render('Signin',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool})
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+exports.SigninPost= async (req,res)=>{
+    try {
+        
+
+
+        const usersub=new User({
+            username: req.body.username,
+            email: req.body.email1 ,
+            password:req.body.password
+           
+        });
+        await usersub.save();
+        req.flash('infoSubmit','Recipe is added successfully')
+
+
+
+        res.redirect('/')
+    } catch (error) {
+        console.log(error)
+        req.flash('infoErrors', error)
+
+        res.redirect('/sign-in')
+    }
+}
+
+exports.LoginGet= async (req,res)=>{
+    try {
+        const infoerrorobj=req.flash('infoErrors')
+        const infosubobj=req.flash('infoSubmit')
+        res.render('Login',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool})
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+exports.LoginPost = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email: email });
+  
+      if (user && await bcrypt.compare(password, user.password)) {
+        req.session.userId = user._id;
+        return res.redirect('/submit-recipe');
+      } else {
+        req.flash('infoErrors', 'Invalid email or password');
+        return res.redirect('/log-in');
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send('Internal Server Error');
+    }
+  };
+  
+  exports.isAuthenticated = (req, res, next) => {
+    if (req.session.userId) {
+        logbool=true;
+      return next();
+    } else {
+      req.flash('infoErrors', 'You must be logged in to access this page');
+      return res.redirect('/log-in');
+    }
+  };
+
+
+  exports.LogOut = (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).send('Could not log out.');
+      } else {
+        return res.redirect('/log-in');
+      }
+    });
+  };
+  
+
+
 
 
 // async function insertDymmyDataCategory(){
