@@ -1,0 +1,58 @@
+<section id="recipesec">
+
+<% if(recipe != null ) { %>
+
+    <nav aria-label="breadcrumb" >
+      <ol class="breadcrumb" id="bred">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page" id="rectitle"><%- recipe.name %></li>
+      </ol>
+    </nav>
+  
+  
+    <div class="row">
+  
+      <div class="col-12 col-md-4">
+        <img src="/uploads/<%- recipe.image %>" id="recimg" class="img-fluid " style="top: 20px;" alt="<%- recipe.name %>" loading="lazy">
+      </div>
+  
+      <div class="col-12 col-md-8">
+        <div class="row">
+          <div class="col-12" id="recd"><h1 id="rectitle2"><%- recipe.name %></h1></div>
+          <div class="col-12 mb-4 bii"><i class="bi bi-tag"></i> <%- recipe.category %></div>
+          <div class="col-12" style="white-space: pre-line;">
+            <h4 id="cookh">Cooking Instructions</h4>
+            <p id="pdec"><%- recipe.description %></p>
+          </div>
+        </div>
+  
+        
+      </div>
+    </div>
+    <div class="" id="ingdiv">
+        <div class="">
+          <h4 id="ingh">Ingredients</h4>
+          <ol class="list-group list-group-flush" id="olid">
+            <% recipe.ingredients.forEach(function(ingredients, index){ %>
+              <li class="olli"><p id="lip"><%= ingredients %></p></li>
+            <% }) %>
+            </ol> 
+        </div>
+      </div>
+  <% } %>
+  <% if(adminbool==true){ %>
+      <div id="eddelbut">
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      <a href="/edit-recipe/<%- recipe._id %>" id="subrecbut" class="btn btn-primary btn-dark btn-lg">Edit Recipe</a>
+    </div>
+    <form action="/delete-recipe/<%- recipe._id %>" enctype="multipart/form-data" method="POST">
+      <input type="hidden" name="_method" value="DELETE">
+      <div class="col-12" id="subd">
+          <button type="submit" class="btn" id="subbut2">Delete Recipe</button>
+      </div>
+  </form>
+  
+  </div>
+    <% } %>
+
+</section>

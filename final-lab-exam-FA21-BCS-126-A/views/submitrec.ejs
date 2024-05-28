@@ -1,0 +1,90 @@
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold">Submit Your Recipe</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead">Share your amazing recipies with thousands of web developers accross the world. Fill our form to get started.</p>
+    </div>
+  </div>
+  
+
+  
+
+
+
+  <div class="row justify-content-center">
+
+    <% if(infosubobj !='') {%>
+        <div class="col-8 alert alert-success" role="alert">
+          <%- infosubobj %>
+        </div>
+      <% } %>
+
+      <% if(infoerrorobj !='') {%>
+        <div class="col-8 alert alert-danger" role="alert">
+          <%- infoerrorobj[0].message %>
+        </div>
+      <% } %>
+    
+    
+    <div class="col-8">
+  
+      <form action="/submit-recipe" enctype="multipart/form-data" method="POST">
+      
+        <div class="row g-3">
+  
+          <div class="col-12">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" name="email" id="email" class="inpbar">
+          </div>
+  
+          <div class="col-12">
+            <label for="name" class="form-label">Recipe Name:</label>
+            <input type="text" name="name" id="name" class="inpbar" required>
+          </div>
+          
+          <div class="col-12 d-flex">
+            <label for="description" class="form-label">Description:</label>
+            
+            <textarea name="description" id="description" class="inpbar" ></textarea>
+          </div>
+  
+          <div class="col-12 d-flex">
+            <label for="name" class="form-label">Ingredients:</label><br>
+            
+            <div class="ingredientList">
+              <div class="ingredeintDiv">
+                <input type="text" name="ingredients" class="inpbar ing" >
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-12 ingbut">
+            <button type="button" class="btn" id="addIngredientsBtn">+ Ingredient</button>
+          </div>
+  
+          <div class="col-12 catdivsub">
+            <label for="category">Select Category:</label>
+            <select  id="sel" class="inpbar" name="category" aria-label="Category">
+              <option selected>Select Category</option>
+              <option value="Thai">Thai</option>
+              <option value="American">American</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Mexican">Mexican</option>
+              <option value="Pakistani">Pakistani</option>
+            </select>
+          </div>
+  
+          <div class="col-12" id="prodimgd">
+            <label for="image" id="prodl">Product Image:</label>
+            <input type="file" class="inpbar" name="image" accept="image/*">
+          </div>
+  
+          <div class="col-12" id="subd">
+            <button type="submit" class="btn" id="subbut2">Submit Recipe</button>
+          </div>
+  
+        </div>
+      
+      </form>
+  
+    </div>
+  </div>
