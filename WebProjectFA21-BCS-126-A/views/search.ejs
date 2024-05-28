@@ -1,26 +1,57 @@
 <section class="pb-4 pt-4 mt-5 ms-4 me-4">
-    <div class="d-flex mb-2 align-items-center">
-      <h2>Latest Recipes</h2>
-      <a href="/explore-latest" class="ms-auto" id="viewmoretext"> View more</a>
-  
-    </div>
-  
-    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-      
-      <% if (typeof recipe !== 'undefined' && recipe.length > 0) { %>
-        <% recipe.forEach(function(rec, index) { %>
-          <a href="/recipe/<%- rec._id %>" class="col text-center category__link">
-            <div class="category__img category__img--large shadow">
-              <img src="/uploads/<%- rec.image %>" alt=" ">     
-            </div>
-            <div class="pt-1"><%- rec.name %></div>
-          </a>
-        <% }); %>
-      <% } %>
-      
-  
-    </div>
-  
-  
-  </section>
-  
+  <div class="d-flex mb-2 align-items-center">
+      <h2>Searched Recipes</h2>
+
+  </div>
+  <div id="bigsdiv">
+      <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+          <% if (typeof recipes !== 'undefined' && recipes.length > 0) { %>
+              <% recipes.forEach(function(rec, index) { %>
+                  <a href="/recipe/<%- rec._id %>" class="col text-center category__link">
+                      <div class="category__img category__img--large shadow">
+                          <img src="/uploads/<%- rec.image %>" alt=" ">     
+                      </div>
+                      <div class="pt-1"><%- rec.name %></div>
+                  </a>
+              <% }); %>
+          <% } else { %>
+              <p>No recipes found</p>
+          <% } %>
+      </div>
+      <div>
+          <h2>Previous Search Terms</h2>
+          <% if (searchTerms && searchTerms.length > 0) { %>
+              <ul>
+                  <% searchTerms.forEach(function(term) { %>
+                      <li><%= term %></li>
+                  <% }); %>
+              </ul>
+          <% } else { %>
+              <p>No search terms stored</p>
+          <% } %>
+      </div>
+      <nav aria-label="Page navigation example">
+          <ul class="pagination">
+              <% if (currentPage > 1) { %>
+                  <li class="page-item">
+                      <a class="page-link" href="?page=<%= currentPage - 1 %>&searchTerm=<%= searchTerm %>" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                      </a>
+                  </li>
+              <% } %>
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>&searchTerm=<%= searchTerm %>"><%= i %></a>
+                  </li>
+              <% } %>
+              <% if (currentPage < totalPages) { %>
+                  <li class="page-item">
+                      <a class="page-link" href="?page=<%= currentPage + 1 %>&searchTerm=<%= searchTerm %>" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                      </a>
+                  </li>
+              <% } %>
+          </ul>
+      </nav>
+  </div>
+</section>

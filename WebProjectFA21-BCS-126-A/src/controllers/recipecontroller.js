@@ -1,9 +1,14 @@
 require('../models/database');
 const Category=require('../models/Category');
 const Recipe=require('../models/Recipe');
-const User=require('../models/Users')
+const User=require('../models/Users');
+const Admin=require('../models/Admin');
 const bcrypt = require('bcryptjs');
+const jwt=require('jsonwebtoken')
 
+const SECRET_KEY='Gurus'
+
+let adminbool=false;
 const { title } = require("process");
 let logbool=false;
 exports.homepage=async(req,res)=>{
@@ -18,7 +23,7 @@ exports.homepage=async(req,res)=>{
         const chinese= await Recipe.find({'category': 'Chinese'}).limit(limitcat)
         const food={latest,thai,american,chinese};
             
-    res.render('index',{title: 'Cookbook Community',categories,food,logbool:logbool});
+    res.render('index',{title: 'Cookbook Community',categories,food,logbool:logbool,adminbool:adminbool});
 
     }catch(error){
         console.log(error)
@@ -33,7 +38,7 @@ exports.exploreCategories=async(req,res)=>{
 
 
             
-    res.render('categories',{title: 'Cookbook Community',categories,logbool:logbool});
+    res.render('categories',{title: 'Cookbook Community',categories,logbool:logbool,adminbool:adminbool});
 
     }catch(error){
         console.log(error)
@@ -49,7 +54,7 @@ exports.exploreRecipe=async(req,res)=>{
        const recipe=await Recipe.findById(recid);
 
         
-    res.render('recipe',{title: 'Cookbook Community',recipe,logbool:logbool});
+    res.render('recipe',{title: 'Cookbook Community',recipe,logbool:logbool,adminbool:adminbool});
 
     }catch(error){
         console.log(error)
@@ -94,7 +99,7 @@ exports.exploreCategoriesbyID = async (req, res) => {
         let totalPages = Math.ceil(totalRecipes / limit);
 
         res.render('recipecategories', {
-            title: 'Cookbook Community',categbyID: recipes,cid: cid,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool});
+            title: 'Cookbook Community',categbyID: recipes,cid: cid,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool,adminbool:adminbool});
 
     } catch (error) {
         console.log(error);
@@ -102,16 +107,55 @@ exports.exploreCategoriesbyID = async (req, res) => {
     }
 };
 
-
 exports.searchRecipe=async(req,res)=>{
-    try{
-        let searchterm=req.body.searchTerm;
-        let recipe=await Recipe.find({$text:{$search: searchterm,$diacriticSensitive:true}})
-        res.render('search',{title:'Cookbook Community',recipe,logbool:logbool});
-    }catch(error){
-        console.log(error)
+    try {
+        const searchTerm = req.body.searchTerm || req.query.searchTerm;
+        res.redirect(`/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+    } catch (error) {
+        console.log(error);
     }
 }
+exports.searchRecipeGet = async (req, res) => {
+    try {
+        const searchterm = req.body.searchTerm || req.query.searchTerm;
+        const page = parseInt(req.query.page) || 1; // Current page number, default is 1
+        const pageSize = 2; // Number of recipes per page
+
+        // Store the search term in the session
+        if (!req.session.terms) {
+            req.session.terms = [];
+        }
+        if (!req.session.terms.includes(searchterm)) {
+            req.session.terms.push(searchterm);
+        }
+
+        // Find the total number of recipes that match the search term
+        const totalRecipes = await Recipe.countDocuments({ $text: { $search: searchterm, $diacriticSensitive: true } });
+
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(totalRecipes / pageSize);
+
+        // Retrieve recipes for the current page
+        const recipes = await Recipe.find({ $text: { $search: searchterm, $diacriticSensitive: true } })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize);
+
+        res.render('search', {
+            title: 'Cookbook Community',
+            recipes,
+            logbool: logbool,
+            adminbool: adminbool,
+            searchTerms: req.session.terms,
+            currentPage: page,
+            totalPages: totalPages,
+            searchTerm: searchterm
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server error");
+    }
+};
+
 
 
 exports.exploreLatest=async (req,res)=>{
@@ -121,7 +165,7 @@ exports.exploreLatest=async (req,res)=>{
         const latest=await Recipe.find({}).sort({_id:-1}).skip((page - 1) * limit).limit(limit);
         
         let totalPages = Math.ceil(10 / limit);
-        res.render("explorelatest",{title:'Cookbook Community',latest,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool})
+        res.render("explorelatest",{title:'Cookbook Community',latest,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool,adminbool:adminbool})
     }catch(error){
         console.log(error)
     }
@@ -138,7 +182,7 @@ exports.exploreRandom=async (req,res)=>{
         
         let totalPages = Math.ceil(10 / limit);
 
-        res.render("explorerandom",{title:'Cookbook Community',recipe,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool})
+        res.render("explorerandom",{title:'Cookbook Community',recipe,currentPage: page,totalPages: totalPages,limit: limit,logbool:logbool,adminbool:adminbool})
     }catch(error){
         console.log(error)
     }
@@ -148,7 +192,7 @@ exports.submitrecipe=async (req,res)=>{
     try{  
         const infoerrorobj=req.flash('infoErrors')
         const infosubobj=req.flash('infoSubmit')
-        res.render('submitrec',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool})
+        res.render('submitrec',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool,adminbool:adminbool})
     }catch(error){
         console.log(error);
     } 
@@ -210,7 +254,7 @@ exports.SigninGet= async (req,res)=>{
     try {
         const infoerrorobj=req.flash('infoErrors')
         const infosubobj=req.flash('infoSubmit')
-        res.render('Signin',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool})
+        res.render('Signin',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool,adminbool:adminbool})
 
     } catch (error) {
         console.log(error)
@@ -246,7 +290,7 @@ exports.LoginGet= async (req,res)=>{
     try {
         const infoerrorobj=req.flash('infoErrors')
         const infosubobj=req.flash('infoSubmit')
-        res.render('Login',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool})
+        res.render('Login',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool,adminbool:adminbool})
 
     } catch (error) {
         console.log(error)
@@ -284,6 +328,7 @@ exports.LoginPost = async (req, res) => {
 
   exports.LogOut = (req, res) => {
     req.session.destroy((err) => {
+        logbool=false
       if (err) {
         return res.status(500).send('Could not log out.');
       } else {
@@ -292,6 +337,245 @@ exports.LoginPost = async (req, res) => {
     });
   };
   
+ 
+  
+
+// exports.adminsignup=async (req,res)=>{
+//     const {username,email,password}=req.body;
+//     try{
+
+//             const hashp=await bcrypt.hash(password,10);
+//             const adm=await Admin.create({
+//                 username: req.body.username,
+//                 email: req.body.email ,
+//                 password:req.body.password
+               
+//             });
+//             const token=jwt.sign({email:adm.email,id:adm._id},SECRET_KEY,{ expiresIn: '15m' })
+//             res.status(201).json({admin:adm,token:token})
+
+
+//     }catch(error){
+//         console.log(error)
+//     }
+// }
+
+
+exports.adminsignup = async (req, res) => {
+    const { username, email, password } = req.body;
+    try {
+        const hashp = await bcrypt.hash(password, 10);
+        const adm = await Admin.create({
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password
+        });
+        const token = jwt.sign({ email: adm.email, id: adm._id }, SECRET_KEY, { expiresIn: '15m' });
+        res.status(201).json({ admin: adm, token: token });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+exports.AdminLoginGet =async (req,res)=>{
+    try {
+        const infoerrorobj=req.flash('infoErrors')
+        const infosubobj=req.flash('infoSubmit')
+        res.render('LoginAdmin',{title:'Cookbook Community',infoerrorobj,infosubobj,logbool:logbool,adminbool:adminbool})
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+// exports.AdminLoginPost = async (req, res) => {
+//     try {
+//       const { email, password } = req.body;
+//     const adminfind=await Admin.findOne({email:email})
+//     if(!adminfind){
+//         console.log("not found email")
+//         res.redirect('/admin-log-in')
+//     }
+
+//     const matchp=await bcrypt.compare(password,adminfind.password)
+//     if(!matchp){
+//         console.log("not found password")
+//         res.redirect('/admin-log-in')
+//     }
+//     adminbool=true; 
+
+//     const token=jwt.sign({email:adminfind.email,id:adminfind._id},SECRET_KEY,{ expiresIn: '15m' })
+
+//     res.render('Admin1',{title:'Cookbook Community',logbool:logbool,adminbool:adminbool})
+//     } catch (error) {
+//       console.log(error);
+//       return res.status(500).send('Internal Server Error');
+//     }
+//   };
+
+  exports.Admin=async (req,res)=>{
+    try {
+        let recipes = await Recipe.find({ })
+                                  
+
+
+        res.render('Admin1', {
+            title: 'Cookbook Community',categbyID: recipes,logbool:logbool,adminbool:adminbool});
+
+       
+    } catch (error) {
+        console.log("error")
+    }
+  }
+//   exports.AdminLogOutPost = async (req, res) => {
+//     try {
+       
+//         if (!req.headers.authorization) {
+//             return res.status(400).json({ error: 'Authorization header missing' });
+//         }
+
+//         const token = req.headers.authorization.split(' ')[1];
+
+//         blacklistedTokens.add(token);
+
+//         res.redirect('/')
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
+const blacklistedTokens = new Set();
+exports.AdminLoginPost = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const adminfind = await Admin.findOne({ email: email });
+        if (!adminfind) {
+            console.log("not found email")
+            res.status(401).json({ error: 'Invalid email or password' });
+        }
+        const matchp = await bcrypt.compare(password, adminfind.password);
+        if (!matchp) {
+            console.log("not found password")
+            res.status(401).json({ error: 'Invalid email or password' });
+        }
+        const token = jwt.sign({ email: adminfind.email, id: adminfind._id }, SECRET_KEY, { expiresIn: '15m' });
+        res.cookie('token', token, { httpOnly: true }); // Set JWT token as a cookie
+        adminbool=true;
+        res.redirect('/admin'); // Redirect to admin dashboard
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+exports.AdminLogOutPost = async (req, res) => {
+    try {
+        if (!req.cookies.token) {
+            return res.status(400).json({ error: 'Authorization header missing' });
+        }
+        const token = req.cookies.token;
+        blacklistedTokens.add(token);
+        res.clearCookie('token'); // Clear JWT token cookie
+        adminbool=false;
+        res.redirect('/'); // Redirect to home page or any other desired location
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+exports.editget = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const recipe = await Recipe.findById(id);
+        const name2 = recipe.name;
+        res.render('EditRec', {
+            title: 'Cookbook Community',
+            logbool: logbool,
+            adminbool: adminbool,
+            id,
+            name2
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server error");
+    }
+};
+
+
+
+exports.editpost = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const recipe = await Recipe.findById(id);
+        const name2=recipe.name;
+        if (!recipe) {
+            req.flash('infoErrors', 'Recipe not found');
+            return res.redirect('/');
+        }
+
+        let imageUploadFile;
+        let uploadPath;
+        let newImageName = recipe.image; // Use existing image name as default
+
+        if (req.files && Object.keys(req.files).length > 0) {
+            imageUploadFile = req.files.image;
+            newImageName = Date.now() + imageUploadFile.name;
+            uploadPath = require('path').resolve('./') + '/public/uploads/' + newImageName;
+
+            imageUploadFile.mv(uploadPath, function (err) {
+                if (err) return res.status(500).send(err);
+            });
+        }
+
+        await Recipe.updateOne(
+            { name:name2},
+            {
+                name: req.body.name,
+                description: req.body.description,
+                email: req.body.email,
+                ingredients: req.body.ingredients,
+                category: req.body.category,
+                image: newImageName,
+            }
+        );
+
+        req.flash('infoSubmit', 'Recipe updated successfully');
+        res.redirect('/');
+    } catch (error) {
+        console.log(error);
+        req.flash('infoErrors', error.message);
+        res.redirect('/');
+    }
+};
+
+exports.deletepost = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Recipe.deleteOne({ _id: id });
+        res.redirect('/');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server error");
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -30,12 +30,19 @@
                         <div class="bardivs"></div>
                         <div class="bardivs"></div>
                         <div class="dropdown-content">
+                            <% if(adminbool==false){ %>
                             <% if(logbool==false) {%>
                             <a href="/log-in" class="loga"><p>Login</p></a>
-                            <a href="/sign-in" class="loga"><p>SignIn</p></a>
+                            <a href="/sign-in" class="loga"><p>SignUp</p></a>
+                            <a href="/admin-log-in" class="loga"><p>Admin</p></a>
                             <% } else{ %>
                                 <a href="/log-out" class="loga"><p>Logout</p></a>
                                 <% } %>
+                            <%  }else if(adminbool==true){ %>
+                                <a href="/admin" class="loga"><p>Dashboard</p></a>
+                                <a href="/admin-log-out" class="loga"><p>Logout</p></a>
+                                
+                            <% } %>
                         </div>
                     </div>
                 </li>

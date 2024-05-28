@@ -47,10 +47,16 @@ const flash = require('connect-flash');
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const User = require('./models/Users.js'); // Adjust the path as necessary
+const methodOverride = require('method-override');
+
+
+
+// Middleware to handle method override
 
 const app = express();
 const PORT = process.env.PORT;
 
+app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./public'));
 app.use(expressLayouts);

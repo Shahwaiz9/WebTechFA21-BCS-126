@@ -808,5 +808,16 @@ label{
     justify-content: center;
 }
 
+#eddelbut{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+}
 
-
+#bigsdiv{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    
+}
