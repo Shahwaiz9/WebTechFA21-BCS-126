@@ -139,10 +139,10 @@ exports.searchRecipe=async(req,res)=>{
 exports.searchRecipeGet = async (req, res) => {
     try {
         const searchterm = req.body.searchTerm || req.query.searchTerm;
-        const page = parseInt(req.query.page) || 1; // Current page number, default is 1
-        const pageSize = 2; // Number of recipes per page
+        const page = parseInt(req.query.page) || 1; 
+        const pageSize = 2; 
 
-        // Store the search term in the session
+     
         if(req.session.userId){
         if (!req.session.terms) {
             req.session.terms = [];
@@ -152,13 +152,10 @@ exports.searchRecipeGet = async (req, res) => {
         }
     }
 
-        // Find the total number of recipes that match the search term
         const totalRecipes = await Recipe.countDocuments({ $text: { $search: searchterm, $diacriticSensitive: true } });
 
-        // Calculate the total number of pages
         const totalPages = Math.ceil(totalRecipes / pageSize);
 
-        // Retrieve recipes for the current page
         const recipes = await Recipe.find({ $text: { $search: searchterm, $diacriticSensitive: true } })
             .skip((page - 1) * pageSize)
             .limit(pageSize);
@@ -183,7 +180,7 @@ exports.searchRecipeGet = async (req, res) => {
 
 exports.exploreLatest=async (req,res)=>{
     try{
-        let page = parseInt(req.query.page) || 1; // Current page number, default is 1
+        let page = parseInt(req.query.page) || 1;
         let limit = parseInt(req.query.limit) || 3;
         const latest=await Recipe.find({}).sort({_id:-1}).skip((page - 1) * limit).limit(limit);
         
@@ -196,7 +193,7 @@ exports.exploreLatest=async (req,res)=>{
 }
 exports.exploreRandom=async (req,res)=>{
     try{
-        let page = parseInt(req.query.page) || 1; // Current page number, default is 1
+        let page = parseInt(req.query.page) || 1; 
         let limit = parseInt(req.query.limit) || 3;
         let count=await Recipe.find().countDocuments()
         let random=Math.floor(Math.random() * count);
@@ -490,26 +487,7 @@ exports.verifyjwt=async(req,res,next)=>{
 
 const blacklistedTokens = new Set();
 exports.AdminLoginPost = async (req, res) => {
-    // try {
-    //     const { email, password } = req.body;
-    //     const adminfind = await Admin.findOne({ email: email });
-    //     if (!adminfind) {
-    //         console.log("not found email")
-    //         res.status(401).json({ error: 'Invalid email or password' });
-    //     }
-    //     const matchp = await bcrypt.compare(password, adminfind.password);
-    //     if (!matchp) {
-    //         console.log("not found password")
-    //         res.status(401).json({ error: 'Invalid email or password' });
-    //     }
-    //     const token = jwt.sign({ email: adminfind.email, id: adminfind._id }, SECRET_KEY, { expiresIn: '15m' });
-    //     res.cookie('token', token, { httpOnly: true }); 
-    //     adminbool=true;
-    //     res.redirect('/admin'); 
-    // } catch (error) {
-    //     console.log(error);
-    //     res.status(500).json({ error: 'Internal Server Error' });
-    // }
+  
     try {
         const { email, password } = req.body;
         const adminfind = await Admin.findOne({ email: email });
@@ -536,10 +514,10 @@ exports.AdminLoginPost = async (req, res) => {
 exports.AdminLogOutPost = async (req, res) => {
     try {
         const token = req.cookies.token;
-        blacklistedTokens.add(token); // Assuming you have a mechanism to store blacklisted tokens
-        res.clearCookie('token'); // Clear JWT token cookie
+        blacklistedTokens.add(token); 
+        res.clearCookie('token'); 
         adminbool = false;
-        res.redirect('/'); // Redirect to home page or any other desired location
+        res.redirect('/'); 
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -578,7 +556,7 @@ exports.editpost = async (req, res) => {
 
         let imageUploadFile;
         let uploadPath;
-        let newImageName = recipe.image; // Use existing image name as default
+        let newImageName = recipe.image; 
 
         if (req.files && Object.keys(req.files).length > 0) {
             imageUploadFile = req.files.image;
