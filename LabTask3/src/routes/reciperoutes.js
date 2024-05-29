@@ -34,7 +34,7 @@ router.get('/admin',recipeController.Admin)
 router.get('/admin-log-in', recipeController.AdminLoginGet);
 router.post('/admin-log-in', recipeController.AdminLoginPost);
 
-router.get('/admin-log-out', recipeController.AdminLogOutPost);
+router.get('/admin-log-out',recipeController.verifyjwt, recipeController.AdminLogOutPost);
 router.post('/admin-signup',recipeController.adminsignup)
 
 
