@@ -7,6 +7,8 @@ const recipeController=require("../controllers/recipecontroller")
 router.get('/',recipeController.homepage)
 
 
+router.get('/visited-products',recipeController.isAuthenticated,recipeController.Visited)
+
 router.get('/recipe/:id',recipeController.exploreRecipe);
 router.get('/categories',recipeController.exploreCategories)
 router.get('/categories/:id',recipeController.exploreCategoriesbyID)
@@ -26,7 +28,7 @@ router.post('/sign-in',recipeController.SigninPost)
 router.get('/log-in', recipeController.LoginGet);
 router.post('/log-in', recipeController.LoginPost);
 
-router.get('/log-out', recipeController.LogOut);
+router.get('/log-out', recipeController.LogOut,recipeController.LogOut);
 
 
 
@@ -34,7 +36,7 @@ router.get('/admin',recipeController.Admin)
 router.get('/admin-log-in', recipeController.AdminLoginGet);
 router.post('/admin-log-in', recipeController.AdminLoginPost);
 
-router.get('/admin-log-out', recipeController.AdminLogOutPost);
+router.get('/admin-log-out',recipeController.verifyjwt, recipeController.AdminLogOutPost);
 router.post('/admin-signup',recipeController.adminsignup)
 
 

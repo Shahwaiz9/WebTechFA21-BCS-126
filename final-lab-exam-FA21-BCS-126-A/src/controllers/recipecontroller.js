@@ -1,19 +1,21 @@
 require('../models/database');
 const Category=require('../models/Category');
 const Recipe=require('../models/Recipe');
+const Products=require('../models/Products')
 const User=require('../models/Users');
 const Admin=require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt=require('jsonwebtoken')
 
 const SECRET_KEY='Gurus'
-
+let visited1=[];
 let adminbool=false;
 const { title } = require("process");
 let logbool=false;
 exports.homepage=async(req,res)=>{
 
     try{
+        const featured=await Products.find({'isFeatured':true})
         const limitcat=6;
         const categories=await Category.find({}).limit(limitcat);
         const latest=await Recipe.find({}).sort({_id:-1}).limit(5)
@@ -23,7 +25,7 @@ exports.homepage=async(req,res)=>{
         const chinese= await Recipe.find({'category': 'Chinese'}).limit(limitcat)
         const food={latest,thai,american,chinese};
             
-    res.render('index',{title: 'Cookbook Community',categories,food,logbool:logbool,adminbool:adminbool});
+    res.render('index',{title: 'Cookbook Community',categories,featured,food,logbool:logbool,adminbool:adminbool});
 
     }catch(error){
         console.log(error)
@@ -51,8 +53,19 @@ exports.exploreRecipe=async(req,res)=>{
 
     try{
        let recid= req.params.id;
-       const recipe=await Recipe.findById(recid);
-
+      let recipe=await Recipe.findById(recid);
+        if(!recipe){
+            console.log("unhere");
+             recipe=await Products.findById(recid);
+        }
+        if(req.session.userId){
+            if(!req.session.visited){
+                req.session.visited=[]
+            }
+            if (!req.session.visited.includes(recipe)) {
+                req.session.visited.push(recipe);
+            }
+        }
         
     res.render('recipe',{title: 'Cookbook Community',recipe,logbool:logbool,adminbool:adminbool});
 
@@ -61,6 +74,14 @@ exports.exploreRecipe=async(req,res)=>{
     }
 }
 
+exports.Visited=async(req,res)=>{
+try {
+    visited1=req.session.visited;
+    res.render("Visited2",{title: 'Cookbook Community',categbyID: visited1,logbool:logbool,adminbool:adminbool})
+} catch (error) {
+    console.log(error);
+}
+}
 
 
 
@@ -122,12 +143,14 @@ exports.searchRecipeGet = async (req, res) => {
         const pageSize = 2; // Number of recipes per page
 
         // Store the search term in the session
+        if(req.session.userId){
         if (!req.session.terms) {
             req.session.terms = [];
         }
         if (!req.session.terms.includes(searchterm)) {
             req.session.terms.push(searchterm);
         }
+    }
 
         // Find the total number of recipes that match the search term
         const totalRecipes = await Recipe.countDocuments({ $text: { $search: searchterm, $diacriticSensitive: true } });
@@ -446,39 +469,76 @@ exports.AdminLoginGet =async (req,res)=>{
 //         res.status(500).json({ error: 'Internal Server Error' });
 //     }
 // };
+
+exports.verifyjwt=async(req,res,next)=>{
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized: No token provided' });
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        }
+        
+        req.user = decoded;
+        next();
+    });
+    next();
+}
+
+
 const blacklistedTokens = new Set();
 exports.AdminLoginPost = async (req, res) => {
+    // try {
+    //     const { email, password } = req.body;
+    //     const adminfind = await Admin.findOne({ email: email });
+    //     if (!adminfind) {
+    //         console.log("not found email")
+    //         res.status(401).json({ error: 'Invalid email or password' });
+    //     }
+    //     const matchp = await bcrypt.compare(password, adminfind.password);
+    //     if (!matchp) {
+    //         console.log("not found password")
+    //         res.status(401).json({ error: 'Invalid email or password' });
+    //     }
+    //     const token = jwt.sign({ email: adminfind.email, id: adminfind._id }, SECRET_KEY, { expiresIn: '15m' });
+    //     res.cookie('token', token, { httpOnly: true }); 
+    //     adminbool=true;
+    //     res.redirect('/admin'); 
+    // } catch (error) {
+    //     console.log(error);
+    //     res.status(500).json({ error: 'Internal Server Error' });
+    // }
     try {
         const { email, password } = req.body;
         const adminfind = await Admin.findOne({ email: email });
         if (!adminfind) {
-            console.log("not found email")
-            res.status(401).json({ error: 'Invalid email or password' });
+            console.log("not found email");
+            return res.status(401).json({ error: 'Invalid email or password' });
         }
         const matchp = await bcrypt.compare(password, adminfind.password);
         if (!matchp) {
-            console.log("not found password")
-            res.status(401).json({ error: 'Invalid email or password' });
+            console.log("not found password");
+            return res.status(401).json({ error: 'Invalid email or password' });
         }
         const token = jwt.sign({ email: adminfind.email, id: adminfind._id }, SECRET_KEY, { expiresIn: '15m' });
-        res.cookie('token', token, { httpOnly: true }); // Set JWT token as a cookie
-        adminbool=true;
-        res.redirect('/admin'); // Redirect to admin dashboard
+        res.cookie('token', token, { httpOnly: true }); 
+        adminbool = true;
+        res.redirect('/admin'); 
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
+
 };
 
 exports.AdminLogOutPost = async (req, res) => {
     try {
-        if (!req.cookies.token) {
-            return res.status(400).json({ error: 'Authorization header missing' });
-        }
         const token = req.cookies.token;
-        blacklistedTokens.add(token);
+        blacklistedTokens.add(token); // Assuming you have a mechanism to store blacklisted tokens
         res.clearCookie('token'); // Clear JWT token cookie
-        adminbool=false;
+        adminbool = false;
         res.redirect('/'); // Redirect to home page or any other desired location
     } catch (error) {
         console.log(error);
@@ -620,7 +680,7 @@ exports.deletepost = async (req, res) => {
 
 // async function insertDymmyDatarecipe(){
 //     try{
-//         await Recipe.insertMany(
+//         await Products.insertMany(
 //             [{
 //                 "name": "Crab cakes",
 //                 "description": "\n        Preheat the oven to 175ºC/gas 3. Lightly grease a 22cm metal or glass pie dish with a little of the butter.\n        For the pie crust, blend the biscuits, sugar and remaining butter in a food processor until the mixture resembles breadcrumbs.\n        Transfer to the pie dish and spread over the bottom and up the sides, firmly pressing down.\n        Bake for 10 minutes, or until lightly browned. Remove from oven and place the dish on a wire rack to cool.\n        For the filling, whisk the egg yolks in a bowl. Gradually whisk in the condensed milk until smooth.\n        Mix in 6 tablespoons of lime juice, then pour the filling into the pie crust and level over with the back of a spoon.\n        Return to the oven for 15 minutes, then place on a wire rack to cool.\n        Once cooled, refrigerate for 6 hours or overnight.\n        To serve, whip the cream until it just holds stiff peaks. Add dollops of cream to the top of the pie, and grate over some lime zest, for extra zing if you like.\n    \n        Source: https://www.jamieoliver.com/recipes/fruit-recipes/key-lime-pie/",
@@ -633,6 +693,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "American",
 //                 "image": "crab-cakes.jpg",
+//                 "isFeatured": "true",
 //               },
 //               {
 //                 "name": "Thai-style mussels",
@@ -647,6 +708,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Thai",
 //                 "image": "thai-style-mussels.jpg",
+//                 "isFeatured": "true",
 //               },
 //               {
 //                 "name": "Thai-style mussels",
@@ -661,6 +723,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Thai",
 //                 "image": "thai-inspired-vegetable-broth.jpg",
+//                 "isFeatured": "true",
 //               },
 //               {
 //                 "name": "Thai-Chinese-inspired pinch salad",
@@ -675,6 +738,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Chinese",
 //                 "image": "thai-chinese-inspired-pinch-salad.jpg",
+//                 "isFeatured": "true",
 //               },
 //               {
 //                 "name": "Southern fried chicken",
@@ -692,6 +756,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "American",
 //                 "image": "southern-friend-chicken.jpg",
+//                 "isFeatured": "true",
 //               },
 //               {
 //                 "name": "Chocolate & banoffee whoopie pies",
@@ -709,6 +774,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "American",
 //                 "image": "chocolate-banoffe-whoopie-pies.jpg",
+//                 "isFeatured": "false",
 //               },
 //               {
 //                 "name": "Veggie pad Thai",
@@ -723,6 +789,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Thai",
 //                 "image": "veggie-pad-thai.jpg",
+//                 "isFeatured": "false",
 //               },
 //               {
 //                 "name": "Chinese steak & tofu stew",
@@ -737,6 +804,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Chinese",
 //                 "image": "chinese-steak-tofu-stew.jpg",
+//                 "isFeatured": "false",
 //               },
 //               {
 //                 "name": "Spring rolls",
@@ -751,6 +819,7 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Chinese",
 //                 "image": "spring-rolls.jpg",
+//                 "isFeatured": "false",
 //               },
 //               {
 //                 "name": "Tom Daley's sweet & sour chicken",
@@ -766,102 +835,9 @@ exports.deletepost = async (req, res) => {
 //                 ],
 //                 "category": "Chinese",
 //                 "image": "tom-daley.jpg",
-//               },
-//               {
-//                 "name": "Crab cakes",
-//                 "description": "\n        Trim and finely chop the spring onions, and pick and finely chop the parsley. Beat the egg.\n    \n        Combine the crabmeat, potatoes, spring onion, parsley, white pepper, cayenne and egg in a bowl with a little sea salt.\n    \n        Refrigerate for 30 minutes, then shape into 6cm cakes.\n    \n        Dust with flour and shallow-fry in oil over a medium heat for about 5 minutes each side or until golden-brown.\n    \n        Serve with pinches of watercress and a dollop of tartare sauce.\n    \n        Source: https://www.jamieoliver.com/recipes/seafood-recipes/crab-cakes/",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "3 spring onions",
-//                   "½ a bunch of fresh flat-leaf parsley",
-//                   "1 large free-range egg",
-//                   "750 g cooked crabmeat , from sustainable sources",
-//                   "300 g mashed potatoes",
-//                   "1 teaspoon ground white pepper",
-//                   "1 teaspoon cayenne pepper",
-//                   "olive oil"
-//                 ],
-//                 "category": "American",
-//                 "image": "crab-cakes.jpg",
-//               },
-//               {
-//                 "name": "Thai red chicken soup",
-//                 "description": "\n        Sit the chicken in a large, deep pan.\n        Carefully halve the squash lengthways, then cut into 3cm chunks, discarding the seeds.\n        Slice the coriander stalks, add to the pan with the squash, curry paste and coconut milk, then pour in 1 litre of water. Cover and simmer on a medium heat for 1 hour 20 minutes.\n        Use tongs to remove the chicken to a platter. Spoon any fat from the surface of the soup over the chicken, then sprinkle with half the coriander leaves.\n        Serve with 2 forks for divvying up the meat at the table. Use a potato masher to crush some of the squash, giving your soup a thicker texture.\n    \n        Source: https://www.jamieoliver.com/recipes/chicken-recipes/thai-red-chicken-soup/",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "1 x 1.6 kg whole free-range chicken",
-//                   "1 butternut squash (1.2kg)",
-//                   "1 bunch of fresh coriander (30g)"
-//                 ],
-//                 "category": "Thai",
-//                 "image": "thai-red-chicken-soup.jpg",
-//               },
-//               { 
-//                 "name": "Key lime pie",
-//                 "description": "\n        Preheat the oven to 175ºC/gas 3. Lightly grease a 22cm metal or glass pie dish with a little of the butter.\n        For the pie crust, blend the biscuits, sugar and remaining butter in a food processor until the mixture resembles breadcrumbs.\n        Transfer to the pie dish and spread over the bottom and up the sides, firmly pressing down.\n        Bake for 10 minutes, or until lightly browned. Remove from oven and place the dish on a wire rack to cool.\n        For the filling, whisk the egg yolks in a bowl. Gradually whisk in the condensed milk until smooth.\n        Mix in 6 tablespoons of lime juice, then pour the filling into the pie crust and level over with the back of a spoon.\n        Return to the oven for 15 minutes, then place on a wire rack to cool.\n        Once cooled, refrigerate for 6 hours or overnight.\n        To serve, whip the cream until it just holds stiff peaks. Add dollops of cream to the top of the pie, and grate over some lime zest, for extra zing if you like.\n    \n        Source: https://www.jamieoliver.com/recipes/fruit-recipes/key-lime-pie/",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "4 large free-range egg yolks",
-//                   "400 ml condensed milk",
-//                   "5 limes",
-//                   "200 ml double cream"
-//                 ],
-//                 "category": "American",
-//                 "image": "key-lime-pie.jpg",
-//               },
-//               {              
-//                 "name": "Grilled lobster rolls",
-//                 "description": "\n        Remove the butter from the fridge and allow to soften.\n        Preheat a griddle pan until really hot.\n        Butter the rolls on both sides and grill on both sides until toasted and lightly charred (keep an eye on them so they don’t burn).\n        Trim and dice the celery, chop the lobster meat and combine with the mayonnaise. Season with sea salt and black pepper to taste.\n        Open your warm grilled buns, shred and pile the lettuce inside each one and top with the lobster mixture. Serve immediately.\n    \n        Source: https://www.jamieoliver.com/recipes/fruit-recipes/key-lime-pie/",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "85 g butter",
-//                   "6 submarine rolls",
-//                   "500 g cooked lobster meat, from sustainable sources",
-//                   "1 stick of celery",
-//                   "2 tablespoons mayonnaise , made using free-range eggs"
-//                 ],
-//                 "category": "American",
-//                 "image": "grilled-lobster-rolls.jpg",
-//               },
-//               {               
-//                 "name": "Thai green curry",
-//                 "description": "Preheat the oven to 180ºC/350ºF/gas 4.\n        Wash the squash, carefully cut it in half lengthways and remove the seeds, then cut into wedges. In a roasting tray, toss with 1 tablespoon of groundnut oil and a pinch of sea salt and black pepper, then roast for around 1 hour, or until tender and golden.\n        For the paste, toast the cumin seeds in a dry frying pan for 2 minutes, then tip into a food processor.\n        Peel, roughly chop and add the garlic, shallots and ginger, along with the kaffir lime leaves, 2 tablespoons of groundnut oil, the fish sauce, chillies (pull off the stalks), coconut and most of the coriander (stalks and all).\n        Bash the lemongrass, remove and discard the outer layer, then snap into the processor, squeeze in the lime juice and blitz into a paste, scraping down the sides halfway.\n        Put 1 tablespoon of groundnut oil into a large casserole pan on a medium heat with the curry paste and fry for 5 minutes to get the flavours going, stirring regularly.\n        Tip in the coconut milk and half a tin’s worth of water, then simmer and thicken on a low heat for 5 minutes.\n    \n        Source: https://www.jamieoliver.com/recipes/butternut-squash-recipes/thai-green-curry/",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "1 butternut squash (1.2kg)",
-//                   "groundnut oil",
-//                   "12x 400 g tins of light coconut milk",
-//                   "400 g leftover cooked greens, such as",
-//                   "Brussels sprouts, Brussels tops, kale, cabbage, broccoli"
-//                 ],
-//                 "category": "Thai",
-//                 "image": "thai-green-curry.jpg",
-//               },
-//               {               
-//                 "name": "Stir-fried vegetables",
-//                 "description": "Crush the garlic and finely slice the chilli and spring onion. Peel and finely slice the red onion, and mix with the garlic, chilli and spring onion.\n        Shred the mangetout, slice the mushrooms and water chestnuts, and mix with the shredded cabbage in a separate bowl to the onion mixture.\n        Heat your wok until it’s really hot. Add a splash of oil – it should start to smoke – then the chilli and onion mix. Stir for just 2 seconds before adding the other mix. Flip and toss the vegetables in the wok if you can; if you can’t, don’t worry, just keep the vegetables moving with a wooden spoon, turning them over every few seconds so they all keep feeling the heat of the bottom of the wok. Season with sea salt and black pepper.\n    \n        Source: https://www.jamieoliver.com/recipes/vegetables-recipes/stir-fried-vegetables/",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "1 clove of garlic",
-//                   "1 fresh red chilli",
-//                   "3 spring onions",
-//                   "1 small red onion",
-//                   "1 handful of mangetout",
-//                   "a few shiitake mushrooms"
-//                 ],
-//                 "category": "Chinese",
-//                 "image": "stir-fried-vegetables.jpg",
-//               },
-//               {               
-//                 "name": "New Chocolate Cake",
-//                 "description": "Chocolate Cake Description...",
-//                 "email": "hello@email.com",
-//                 "ingredients": [
-//                   "Water"
-//                 ],
-//                 "category": "Mexican",
-//                 "image": "chinese-steak-tofu-stew.jpg",
-//               }]
+//                 "isFeatured": "false",
+//               }
+//              ]
 //         );
 //         console.log('In here')
         

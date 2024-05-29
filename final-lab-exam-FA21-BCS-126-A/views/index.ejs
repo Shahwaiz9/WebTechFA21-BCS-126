@@ -104,6 +104,43 @@ Welcome to our delightful culinary hub, where flavor meets creativity and every 
 </div>
 </section>
 
+
+
+
+<!-- Products Featured Recipe -->
+<section class="pb-4 pt-4 mt-5 ms-4 me-4">
+  <div class="d-flex mb-2 align-items-center">
+    <h2>Featured Products</h2>
+
+  </div>
+
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    
+    <% if (featured != '' ) { %>
+      <% featured.forEach(function(recipe, index) { %>
+        <a href="/recipe/<%- recipe._id %>" class="col text-center category__link">
+          <div class="category__img category__img--large shadow">
+            <img src="/uploads/<%- recipe.image %>" alt=" ">     
+          </div>
+          <div class="pt-1"><%- recipe.name %></div>
+        </a>
+      <% }); %>
+    <% } %>
+    
+
+  </div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
 <!-- Latest recipies section -->
 <section class="pb-4 pt-4 mt-5 ms-4 me-4">
   <div class="d-flex mb-2 align-items-center">
