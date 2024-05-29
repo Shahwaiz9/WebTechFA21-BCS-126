@@ -580,7 +580,7 @@ exports.editpost = async (req, res) => {
             }
         );
 
-        req.flash('infoSubmit', 'Recipe updated successfully');
+        req.flash('infoSubmit', 'Recipe is updated successfully');
         res.redirect('/');
     } catch (error) {
         console.log(error);
